@@ -23,9 +23,7 @@ body{
   justify-content: center;
 }
 
-.app-root.sidebar-collapsed .app-main{
-  margin-left: 0;
-}
+
 
 .topbar, .sidebar, .app-main{
   transition: all 220ms ease;
@@ -61,4 +59,24 @@ body{
 .page > div:first-of-type{
   margin-bottom: 12px;
 }
+
+/* modal form */
+.modal-overlay{
+  position: fixed;
+  left:0;top:0;right:0;bottom:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(2,6,23,0.5);
+  z-index: 60;
+}
+.modal{
+  background:#fff;
+  padding:16px;
+  border-radius:8px;
+  min-width:320px;
+  box-shadow: 0 6px 30px rgba(2,6,23,0.2);
+}
+.form-row{display:flex;gap:8px;margin-top:8px}
+
 

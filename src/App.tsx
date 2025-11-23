@@ -10,7 +10,11 @@ function App() {
   const [collapsed, setCollapsed] = useState(false)
 
   return (
-    <div className={`app-root ${collapsed ? 'sidebar-collapsed' : ''}`}>
+    <div
+      className={`app-root ${collapsed ? 'sidebar-collapsed' : ''}`}
+      // when `collapsed` is true the drawer is closed, so give app full width
+      style={{ ['--sidebar-width' as any]: collapsed ? '0px' : '240px' }}
+    >
       {/* manage sidebar collapsed state here and pass handlers */}
       <NavBar onToggle={() => setCollapsed((s) => !s)} />
       <Sidebar collapsed={collapsed} />

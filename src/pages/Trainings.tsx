@@ -1,110 +1,73 @@
 import { useEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
-
-const BASE = import.meta.env.VITE_API_BASE_URL ?? 'https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api'
-
-type SimpleCustomer = {
-  id?: number
-  firstname?: string
-  lastname?: string
-}
-
-type Training = {
-  id?: number
-  date?: string
-  activity?: string
-  duration?: number | string
-  customer?: SimpleCustomer
-  _links?: any
-}
+import { getTrainings } from '../api/personaltrainer.api'
+import type { Training } from '../types'
+import { DataGrid } from '@mui/x-data-grid'
+import type { GridColDef } from '@mui/x-data-grid'
+import TextField from '@mui/material/TextField'
 
 export default function Trainings() {
   const [trainings, setTrainings] = useState<Training[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState('')
-  const [sortKey, setSortKey] = useState<'date' | 'activity' | 'duration'>('date')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
-
+ 
   useEffect(() => {
-    setLoading(true)
-    setError(null)
-    fetch(`${BASE}/gettrainings`)
-      .then((res) => res.json())
-      .then((data) => {
-        const list: Training[] = Array.isArray(data) ? data : data?._embedded?.trainings ?? []
-        setTrainings(list)
-      })
-      .catch((err) => setError(String(err)))
-      .finally(() => setLoading(false))
+    let mounted = true
+    const load = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const list: Training[] = await getTrainings()
+        if (mounted) setTrainings(list)
+      } catch (e: any) {
+        setError(String(e))
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+    load()
+    return () => { mounted = false }
   }, [])
 
-  const filtered = useMemo(() => {
+  
+
+  const getCustomerName = (t: Training) => (t.customer ? `${t.customer.firstname ?? ''} ${t.customer.lastname ?? ''}`.trim() : '')
+
+  const displayed = useMemo(() => {
     const q = filter.trim().toLowerCase()
-    return trainings.filter((t) => {
-      if (!q) return true
-      const activity = (t.activity ?? '').toLowerCase()
-      const cname = t.customer ? `${t.customer.firstname ?? ''} ${t.customer.lastname ?? ''}`.toLowerCase() : ''
-      return activity.includes(q) || cname.includes(q)
-    })
+    return trainings
+      .map((t, i) => ({ id: t._links?.self?.href ?? `tr-${i}`, ...t, customerName: getCustomerName(t) }))
+      .filter(t => {
+        if (!q) return true
+        const hay = [t.activity, t.customerName].filter(Boolean).join(' ').toLowerCase()
+        return hay.includes(q)
+      })
   }, [trainings, filter])
 
-  const sorted = useMemo(() => {
-    const s = [...filtered]
-    s.sort((a, b) => {
-      if (sortKey === 'date') {
-        const da = new Date(a.date ?? '')
-        const db = new Date(b.date ?? '')
-        return sortOrder === 'asc' ? +da - +db : +db - +da
-      }
-      const va = String(a[sortKey] ?? '').toLowerCase()
-      const vb = String(b[sortKey] ?? '').toLowerCase()
-      if (va < vb) return sortOrder === 'asc' ? -1 : 1
-      if (va > vb) return sortOrder === 'asc' ? 1 : -1
-      return 0
-    })
-    return s
-  }, [filtered, sortKey, sortOrder])
-
-  const onSort = (key: typeof sortKey) => {
-    if (sortKey === key) setSortOrder((o) => o === 'asc' ? 'desc' : 'asc')
-    else setSortKey(key)
-  }
-
   const formatDate = (d?: string) => d ? dayjs(d).format('DD.MM.YYYY HH:mm') : '-'
+
+  const columns: GridColDef[] = [
+     { field: 'date', headerName: 'Date', flex: 1, minWidth: 180, renderCell: (params: any) => formatDate(params?.row?.date ?? params?.value) },
+     { field: 'activity', headerName: 'Activity', flex: 1.6, minWidth: 200 },
+     { field: 'duration', headerName: 'Duration', flex: 0.6, minWidth: 100 },
+     { field: 'customerName', headerName: 'Customer', flex: 1.6, minWidth: 200 }
+  ]
 
   return (
     <section className="page">
       <h2>Trainings</h2>
-      <div style={{ marginBottom: 12 }}>
-        <input placeholder="Filter by activity or customer" value={filter} onChange={(e) => setFilter(e.target.value)} />
-        <button onClick={() => setFilter('')} style={{ marginLeft: 8 }}>Clear</button>
+      <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
+  <TextField size="small" placeholder="Search" value={filter} onChange={e => setFilter(e.target.value)} />
+        <button onClick={() => setFilter('')}>Clear</button>
       </div>
 
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'crimson' }}>{error}</p>}
 
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th onClick={() => onSort('date')}>Date</th>
-            <th onClick={() => onSort('activity')}>Activity</th>
-            <th onClick={() => onSort('duration')}>Duration</th>
-            <th>Customer</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.length === 0 && !loading && <tr><td colSpan={4}>No trainings found</td></tr>}
-          {sorted.map((t, i) => (
-            <tr key={t.id ?? i}>
-              <td>{formatDate(t.date)}</td>
-              <td>{t.activity ?? '-'}</td>
-              <td>{t.duration ?? '-'}{typeof t.duration === 'number' ? ' min' : ''}</td>
-              <td>{t.customer ? `${t.customer.firstname ?? ''} ${t.customer.lastname ?? ''}`.trim() : '-'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div style={{ height: 520, width: '100%' }}>
+        <DataGrid rows={displayed} columns={columns} autoPageSize disableRowSelectionOnClick />
+      </div>
     </section>
   )
 }
