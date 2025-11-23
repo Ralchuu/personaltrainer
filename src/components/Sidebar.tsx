@@ -7,7 +7,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import PersonIcon from '@mui/icons-material/Person'
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
-import EventIcon from '@mui/icons-material/Event'
+// Event / Calendar removed (planned for later) - no import
 
 type Props = {
   collapsed?: boolean
@@ -43,12 +43,6 @@ export default function Sidebar({ collapsed = false }: Props){
           <ListItemButton component={Link} to="/trainings" selected={loc.pathname.startsWith('/trainings')}>
             <ListItemIcon><DirectionsRunIcon fontSize="small" /></ListItemIcon>
             {!collapsed && <ListItemText primary="Trainings" />}
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component="a" href="#">
-            <ListItemIcon><EventIcon fontSize="small" /></ListItemIcon>
-            {!collapsed && <ListItemText primary="Calendar" />}
           </ListItemButton>
         </ListItem>
       </List>
