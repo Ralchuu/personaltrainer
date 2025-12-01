@@ -2,6 +2,7 @@ import type { CustomerForm } from '../types/customer'
 
 const BASE = (import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
+// getCustomers(): Fetches customers from the API base and returns an array.
 export function getCustomers() {
   return fetch(`${BASE}/customers`)
     .then(response => {
@@ -15,6 +16,7 @@ export function getCustomers() {
     })
 }
 
+// deleteCustomer: Delete a customer by numeric id or by full resource URL. Resolves to null on success.
 export function deleteCustomer(urlOrId: string | number) {
   const url = typeof urlOrId === 'number' ? `${BASE}/customers/${urlOrId}` : String(urlOrId)
   return fetch(url, { method: 'DELETE' }).then(res => {
@@ -23,6 +25,7 @@ export function deleteCustomer(urlOrId: string | number) {
   })
 }
 
+// getCustomer: Fetch a single customer resource by its URL and return the parsed JSON object.
 export function getCustomer(url: string) {
   return fetch(url).then(res => {
     if (!res.ok) throw new Error('Error when fetching customer: ' + res.statusText)
@@ -30,6 +33,7 @@ export function getCustomer(url: string) {
   })
 }
 
+// saveCustomer: POST a new customer to the API and return the created resource.
 export function saveCustomer(newCustomer: CustomerForm) {
   return fetch(`${BASE}/customers`, {
     method: 'POST',
@@ -41,6 +45,7 @@ export function saveCustomer(newCustomer: CustomerForm) {
   })
 }
 
+// updateCustomer: PUT updatedCustomer to the resource URL and return the updated object.
 export function updateCustomer(url: string, updatedCustomer: CustomerForm) {
   return fetch(url, {
     method: 'PUT',

@@ -12,7 +12,7 @@ function App() {
   return (
     <div
       className={`app-root ${collapsed ? 'sidebar-collapsed' : ''}`}
-      // when `collapsed` is true the drawer is closed, so give app full width
+      // when `collapsed` is true the drawer is closed
       style={{ ['--sidebar-width' as any]: collapsed ? '0px' : '240px' }}
     >
       {/* manage sidebar collapsed state here and pass handlers */}

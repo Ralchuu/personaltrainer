@@ -26,7 +26,7 @@ export default function Sidebar({ collapsed = false }: Props){
         '& .MuiDrawer-paper': {
           width,
           boxSizing: 'border-box',
-          // hide the paper entirely when closed (prevent a narrow strip)
+          // hide the paper entirely when closed
           display: collapsed ? 'none' : 'block'
         }
       }}

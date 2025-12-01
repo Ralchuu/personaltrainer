@@ -6,12 +6,14 @@ import { DataGrid } from '@mui/x-data-grid'
 import type { GridColDef } from '@mui/x-data-grid'
 import TextField from '@mui/material/TextField'
 
+// Trainings(): page component that renders trainings in a DataGrid, formats dates, and shows customer names.
 export default function Trainings() {
   const [trainings, setTrainings] = useState<Training[]>([])
   const [filter, setFilter] = useState('')
 
   useEffect(() => { fetchTrainings() }, [])
 
+  // fetchTrainings(): load trainings and put them into state.
   function fetchTrainings() {
     getTrainingsWithCustomer()
       .then(list => setTrainings(Array.isArray(list) ? list : []))

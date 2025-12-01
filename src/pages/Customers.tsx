@@ -5,17 +5,19 @@ import { DataGrid } from '@mui/x-data-grid'
 import type { GridColDef } from '@mui/x-data-grid'
 import TextField from '@mui/material/TextField'
 
+// Customers(): page component that renders customer list in a DataGrid and provides a simple search box.
 export default function Customers() {
   const [customers, setCustomers] = useState<Customer[]>([])
   const [filter, setFilter] = useState('')
 
-  useEffect(() => { fetchCustomers() }, [])
-
+  // fetchCustomers(): load customers into state using getCustomers()
   function fetchCustomers() {
     getCustomers()
       .then(data => setCustomers(Array.isArray(data) ? data : []))
       .catch(() => {})
   }
+
+  useEffect(() => { fetchCustomers() }, [])
 
   const rows = filter.trim()
     ? customers.filter(c => [c.firstname, c.lastname, c.email, c.phone, c.streetaddress, c.postcode, c.city]
