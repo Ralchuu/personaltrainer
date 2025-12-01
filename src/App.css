@@ -23,8 +23,6 @@ body{
   justify-content: center;
 }
 
-
-
 .topbar, .sidebar, .app-main{
   transition: all 220ms ease;
 }
@@ -60,7 +58,6 @@ body{
   margin-bottom: 12px;
 }
 
-/* modal form */
 .modal-overlay{
   position: fixed;
   left:0;top:0;right:0;bottom:0;

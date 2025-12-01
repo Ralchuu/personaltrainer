@@ -4,13 +4,12 @@
   left: 0;
   right: 0;
   height: 56px;
-  background: #3949ab; /* blue */
+  background: #3949ab;
   color: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 30;
 }
 .topbar-inner {
-  /* align the topbar content with the left edge of the sidebar/main content */
   max-width: var(--content-max);
   margin-left: var(--sidebar-width);
   height: 100%;

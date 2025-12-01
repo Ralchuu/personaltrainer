@@ -7,7 +7,6 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import PersonIcon from '@mui/icons-material/Person'
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
-// Event / Calendar removed (planned for later) - no import
 
 type Props = {
   collapsed?: boolean
