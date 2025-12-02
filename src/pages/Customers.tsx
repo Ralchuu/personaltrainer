@@ -6,6 +6,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import AddCustomer from '../components/AddCustomer'
+import EditCustomer from '../components/EditCustomer'
 
 // Customers(): page component that renders customer list in a DataGrid and provides a simple search box.
 export default function Customers() {
@@ -35,7 +36,7 @@ export default function Customers() {
     : customers
 
   // columns: describe which fields show up in the table and their labels
-  const columns = [
+  const columns: any[] = [
     { field: 'firstname', headerName: 'First name', flex: 1, minWidth: 140 },
     { field: 'lastname', headerName: 'Last name', flex: 1, minWidth: 140 },
     { field: 'streetaddress', headerName: 'Address', flex: 1.4, minWidth: 180 },
@@ -44,6 +45,15 @@ export default function Customers() {
     { field: 'email', headerName: 'Email', flex: 1.6, minWidth: 200 },
     { field: 'phone', headerName: 'Phone', width: 130 }
   ]
+
+  // append actions column with the Edit button component
+  columns.push({
+    field: 'actions', headerName: 'Actions', width: 120, sortable: false, filterable: false,
+    renderCell: (params: any) => {
+      const row = params.row as any
+      return <EditCustomer fetchCustomers={fetchCustomers} customerRow={row} />
+    }
+  })
 
   return (
     <section className="page">
@@ -62,7 +72,7 @@ export default function Customers() {
       </div>
 
 
-      <div style={{ height: 520, width: '100%' }}>
+      <div style={{ height: 520, width: '120%' }}>
         <DataGrid
           rows={rows}
           columns={columns}

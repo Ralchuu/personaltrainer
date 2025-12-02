@@ -49,6 +49,11 @@ export default function AddCustomer({ open, onClose, onSaved }: Props) {
 
 	// handleSave(): build a simple object from form fields and POST it to the API.
 	function handleSave() {
+		// required check
+		if (!firstname.trim() || !lastname.trim()) {
+			alert('Please enter first name and last name')
+			return
+		}
 		const payload: CustomerForm = {
 			firstname: firstname.trim(),
 			lastname: lastname.trim(),
@@ -74,8 +79,8 @@ export default function AddCustomer({ open, onClose, onSaved }: Props) {
 			<DialogTitle>Add customer</DialogTitle>
 			<DialogContent>
 				<div style={{ display: 'grid', gap: 12 }}>
-					<TextField label="First name" value={firstname} onChange={e => setFirstname(e.target.value)} />
-					<TextField label="Last name" value={lastname} onChange={e => setLastname(e.target.value)} />
+					<TextField required label="First name" value={firstname} onChange={e => setFirstname(e.target.value)} />
+					<TextField required label="Last name" value={lastname} onChange={e => setLastname(e.target.value)} />
 					<TextField label="Street address" value={streetaddress} onChange={e => setStreetaddress(e.target.value)} />
 					<TextField label="Post code" value={postcode} onChange={e => setPostcode(e.target.value)} />
 					<TextField label="City" value={city} onChange={e => setCity(e.target.value)} />
