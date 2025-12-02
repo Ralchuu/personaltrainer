@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { getCustomers } from '../api/customerApi'
+import { getCustomers, deleteCustomer } from '../api/customerApi'
 import type { Customer } from '../types/customer'
 import { DataGrid } from '@mui/x-data-grid'
-
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import DeleteIcon from '@mui/icons-material/Delete'
 import AddCustomer from '../components/AddCustomer'
 import EditCustomer from '../components/EditCustomer'
 
@@ -46,12 +47,24 @@ export default function Customers() {
     { field: 'phone', headerName: 'Phone', width: 130 }
   ]
 
-  // append actions column with the Edit button component
+  // append actions column with the Edit and Delete controls
   columns.push({
-    field: 'actions', headerName: 'Actions', width: 120, sortable: false, filterable: false,
+    field: 'actions', headerName: 'Actions', width: 140, sortable: false, filterable: false,
     renderCell: (params: any) => {
       const row = params.row as any
-      return <EditCustomer fetchCustomers={fetchCustomers} customerRow={row} />
+      return (
+        <div style={{ display: 'flex', gap: 6 }}>
+          <EditCustomer fetchCustomers={fetchCustomers} customerRow={row} />
+          <IconButton size="small" onClick={() => {
+            if (window.confirm('Delete this customer?')) {
+              const target = (row as any)?._links?.self?.href ?? (row as any).id
+              deleteCustomer(target).then(() => fetchCustomers())
+            }
+          }}>
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </div>
+      )
     }
   })
 
