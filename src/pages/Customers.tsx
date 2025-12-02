@@ -86,6 +86,23 @@ export default function Customers() {
         <TextField size="small" placeholder="Search" value={filter} onChange={e => setFilter(e.target.value)} />
         {/* Clear button: reset the search box */}
         <Button onClick={() => setFilter('')} variant="outlined" size="small">Clear</Button>
+        {/* Export CSV */}
+        <Button onClick={() => {
+          const header = 'First name,Last name,Address,Post code,City,Email,Phone'
+          const lines = rows.map(r => (
+            [r.firstname, r.lastname, r.streetaddress, r.postcode, r.city, r.email, r.phone]
+              .map(x => x ?? '')
+              .join(',')
+          ))
+          const csv = [header, ...lines].join('\n')
+          const blob = new Blob([csv], { type: 'text/csv' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = 'customers.csv'
+          a.click()
+          URL.revokeObjectURL(url)
+        }} variant="outlined" size="small">Export CSV</Button>
         <div style={{ flex: 1 }} />
         {/* Add customer button: open the dialog */}
         <Button variant="contained" size="small" onClick={() => setAddOpen(true)}>Add customer</Button>
