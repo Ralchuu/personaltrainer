@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddCustomer from '../components/AddCustomer'
 import EditCustomer from '../components/EditCustomer'
+import AddTraining from '../components/AddTraining'
 
 // Customers(): page component that renders customer list in a DataGrid and provides a simple search box.
 export default function Customers() {
@@ -49,7 +50,7 @@ export default function Customers() {
 
   // append actions column with the Edit and Delete controls
   columns.push({
-    field: 'actions', headerName: 'Actions', width: 140, sortable: false, filterable: false,
+    field: 'actions', headerName: 'Actions', width: 120, sortable: false, filterable: false,
     renderCell: (params: any) => {
       const row = params.row as any
       return (
@@ -65,6 +66,14 @@ export default function Customers() {
           </IconButton>
         </div>
       )
+    }
+  })
+
+  columns.push({
+    field: 'addtraining', headerName: 'Add training', width: 120, sortable: false, filterable: false,
+    renderCell: (params: any) => {
+      const row = params.row as any
+      return <AddTraining fetchTrainings={() => {}} customerRow={row} />
     }
   })
 
@@ -85,7 +94,7 @@ export default function Customers() {
       </div>
 
 
-      <div style={{ height: 520, width: '120%' }}>
+      <div style={{ height: 520, width: '140%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
