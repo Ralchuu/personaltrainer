@@ -2,29 +2,40 @@ import { useEffect, useState } from 'react'
 import { getCustomers } from '../api/customerApi'
 import type { Customer } from '../types/customer'
 import { DataGrid } from '@mui/x-data-grid'
-import type { GridColDef } from '@mui/x-data-grid'
+
 import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import AddCustomer from '../components/AddCustomer'
 
 // Customers(): page component that renders customer list in a DataGrid and provides a simple search box.
 export default function Customers() {
+
+  // - customers: array where the fetched customer list is stored
+  // - filter: text from the search box
+  // - addOpen: whether the add-customer dialog is visible
   const [customers, setCustomers] = useState<Customer[]>([])
   const [filter, setFilter] = useState('')
+  const [addOpen, setAddOpen] = useState(false)
 
-  // fetchCustomers(): load customers into state using getCustomers()
+  // fetchCustomers(): ask the API for the customer list and save it into state
   function fetchCustomers() {
     getCustomers()
       .then(data => setCustomers(Array.isArray(data) ? data : []))
-      .catch(() => {})
+      .catch(err => console.error('Failed to fetch customers', err))
   }
 
+  // When the page loads, fetch the customers once. The empty [] means "run once".
   useEffect(() => { fetchCustomers() }, [])
 
+    // rows: the data passed to the DataGrid. If the user typed something in the search box,
+    // the code filters customers by joining relevant fields and doing a simple includes() check.
   const rows = filter.trim()
     ? customers.filter(c => [c.firstname, c.lastname, c.email, c.phone, c.streetaddress, c.postcode, c.city]
         .filter(Boolean).join(' ').toLowerCase().includes(filter.toLowerCase()))
     : customers
 
-  const columns: GridColDef[] = [
+  // columns: describe which fields show up in the table and their labels
+  const columns = [
     { field: 'firstname', headerName: 'First name', flex: 1, minWidth: 140 },
     { field: 'lastname', headerName: 'Last name', flex: 1, minWidth: 140 },
     { field: 'streetaddress', headerName: 'Address', flex: 1.4, minWidth: 180 },
@@ -39,8 +50,15 @@ export default function Customers() {
       <h2>Customers</h2>
 
       <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
+        {/* Search box: updates `filter` state on change */}
         <TextField size="small" placeholder="Search" value={filter} onChange={e => setFilter(e.target.value)} />
-        <button onClick={() => setFilter('')}>Clear</button>
+        {/* Clear button: reset the search box */}
+        <Button onClick={() => setFilter('')} variant="outlined" size="small">Clear</Button>
+        <div style={{ flex: 1 }} />
+        {/* Add customer button: open the dialog */}
+        <Button variant="contained" size="small" onClick={() => setAddOpen(true)}>Add customer</Button>
+        {/* The add dialog: when saved, reload the list from server */}
+        <AddCustomer open={addOpen} onClose={() => setAddOpen(false)} onSaved={() => fetchCustomers()} />
       </div>
 
 
