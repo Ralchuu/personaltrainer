@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-import { getTrainingsWithCustomer } from '../api/trainingApi'
+import { getTrainingsWithCustomer, deleteTraining } from '../api/trainingApi'
+import IconButton from '@mui/material/IconButton'
+import DeleteIcon from '@mui/icons-material/Delete'
 import type { Training } from '../types/training'
 import { DataGrid } from '@mui/x-data-grid'
 import type { GridColDef } from '@mui/x-data-grid'
@@ -37,6 +39,24 @@ export default function Trainings() {
         return typeof c === 'string' ? c : `${c.firstname ?? ''} ${c.lastname ?? ''}`.trim()
       } }
   ]
+
+  // add actions column with delete button
+  columns.push({
+    field: 'actions', headerName: 'Actions', width: 100, sortable: false, filterable: false,
+    renderCell: (params: any) => {
+      const row = params.row as any
+      return (
+        <IconButton size="small" onClick={() => {
+          if (window.confirm('Delete this training?')) {
+            const target = row?._links?.self?.href ?? row?.id
+            deleteTraining(target).then(() => fetchTrainings()).catch(() => {})
+          }
+        }}>
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      )
+    }
+  })
 
   return (
     <section className="page">
