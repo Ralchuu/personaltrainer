@@ -20,7 +20,12 @@ export default function AddTraining({ fetchTrainings, customerRow }: any) {
 
   // open the dialog and reset fields
   const openDialog = () => {
-    setTempDate(new Date().toISOString().slice(0, 16))
+    // use local time so the datetime-local shows the user's local clock
+    const local = (d: Date) => {
+      const pad = (n: number) => String(n).padStart(2, '0')
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+    }
+    setTempDate(local(new Date()))
     setDate('')
     setActivity('')
     setDuration('')
