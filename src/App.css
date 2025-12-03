@@ -76,4 +76,35 @@ body{
 }
 .form-row{display:flex;gap:8px;margin-top:8px}
 
+/* FullCalendar: make event text wrap and clamp to two lines so it fits the box */
+.fc .fc-event {
+  padding: 6px 8px;
+}
+
+/* Event content layout: time on top, activity bold, customer smaller below */
+.fc .fc-event-main { display: block; line-height: 1.1; }
+.fc .fc-event-time { font-weight: 700; font-size: 0.75rem; margin-bottom: 2px; }
+.fc .fc-event-activity { font-weight: 600; font-size: 0.9rem; margin: 0; }
+.fc .fc-event-customer { font-size: 0.78rem; margin-top: 2px; color: rgba(0,0,0,0.85); }
+.fc .fc-event-activity, .fc .fc-event-customer { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Small spacing for stacked events */
+.fc .fc-daygrid-event { margin-bottom: 6px; }
+
+/* Center event content in Day view (dayGridDay) */
+.calendar-view-day .fc .fc-daygrid-event {
+  display: flex;
+  justify-content: center;
+}
+.calendar-view-day .fc .fc-daygrid-event .fc-event-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+.calendar-view-day .fc .fc-daygrid-event .fc-event-activity { font-weight: 600; }
+.calendar-view-day .fc .fc-daygrid-event .fc-event-customer { color: rgba(0,0,0,0.8); }
+
 
