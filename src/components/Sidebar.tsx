@@ -8,6 +8,7 @@ import ListItemText from '@mui/material/ListItemText'
 import PersonIcon from '@mui/icons-material/Person'
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import BarChartIcon from '@mui/icons-material/BarChart'
 
 type Props = {
   collapsed?: boolean
@@ -49,6 +50,12 @@ export default function Sidebar({ collapsed = false }: Props){
           <ListItemButton component={Link} to="/calendar" selected={loc.pathname.startsWith('/calendar')}>
             <ListItemIcon><CalendarMonthIcon fontSize="small" /></ListItemIcon>
             {!collapsed && <ListItemText primary="Calendar" />}
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/stats" selected={loc.pathname.startsWith('/stats')}>
+            <ListItemIcon><BarChartIcon fontSize="small" /></ListItemIcon>
+            {!collapsed && <ListItemText primary="Statistics" />}
           </ListItemButton>
         </ListItem>
       </List>

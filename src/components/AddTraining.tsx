@@ -37,7 +37,12 @@ export default function AddTraining({ fetchTrainings, customerRow }: any) {
     if (!date || !activity || !duration) return alert('Please fill date, activity and duration')
     const customer = customerRow?._links?.self?.href || customerRow?.id
     saveTraining({ date, activity, duration: Number(duration), customer: String(customer) })
-      .then(() => { fetchTrainings(); setOpen(false) })
+      .then((created) => {
+        // notify other parts of the app and include the created training as detail
+        try { window.dispatchEvent(new CustomEvent('trainings:updated', { detail: created })) } catch {}
+        fetchTrainings();
+        setOpen(false);
+      })
       .catch(() => {})
   }
 

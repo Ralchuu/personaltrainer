@@ -49,7 +49,7 @@ export default function Trainings() {
         <IconButton size="small" onClick={() => {
           if (window.confirm('Delete this training?')) {
             const target = row?._links?.self?.href ?? row?.id
-            deleteTraining(target).then(() => fetchTrainings()).catch(() => {})
+            deleteTraining(target).then(() => { fetchTrainings(); window.dispatchEvent(new CustomEvent('trainings:updated')) }).catch(() => {})
           }
         }}>
           <DeleteIcon fontSize="small" />
