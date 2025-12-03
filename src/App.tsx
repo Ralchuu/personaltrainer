@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar'
 import Customers from './pages/Customers'
 import Trainings from './pages/Trainings'
 import Calendar from './pages/Calendar'
+import Stats from './pages/Stats'
 
 function App() {
   const [collapsed, setCollapsed] = useState(false)
@@ -24,6 +25,7 @@ function App() {
           <Route path="/customers" element={<Customers />} />
           <Route path="/trainings" element={<Trainings />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/stats" element={<Stats />} />
         </Routes>
       </main>
     </div>
