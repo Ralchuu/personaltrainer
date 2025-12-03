@@ -21,8 +21,15 @@ function trainingsToEvents(list: Training[]) {
     const duration = Number(t.duration || 60)
     const end = new Date(d.getTime())
     end.setMinutes(end.getMinutes() + duration)
-    // build a simple customer name string if present
-    const cust = typeof t.customer === 'object' ? `${t.customer.firstname ?? ''} ${t.customer.lastname ?? ''}`.trim() : String(t.customer ?? '')
+    // build a simple customer name string if present (guard null)
+    let cust = ''
+    if (t.customer != null && typeof t.customer === 'object') {
+      const first = (t.customer as any).firstname ?? ''
+      const last = (t.customer as any).lastname ?? ''
+      cust = `${first} ${last}`.trim()
+    } else {
+      cust = String(t.customer ?? '')
+    }
     out.push({
       id: (t as any)?._links?.self?.href ?? String((t as any).id ?? ''),
       // title contains activity and optional customer name separated by ' / '
