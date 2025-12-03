@@ -5,6 +5,7 @@ import NavBar from './components/NavBar'
 import Sidebar from './components/Sidebar'
 import Customers from './pages/Customers'
 import Trainings from './pages/Trainings'
+import Calendar from './pages/Calendar'
 
 function App() {
   const [collapsed, setCollapsed] = useState(false)
@@ -15,7 +16,6 @@ function App() {
       // when `collapsed` is true the drawer is closed
       style={{ ['--sidebar-width' as any]: collapsed ? '0px' : '240px' }}
     >
-      {/* manage sidebar collapsed state here and pass handlers */}
       <NavBar onToggle={() => setCollapsed((s) => !s)} />
       <Sidebar collapsed={collapsed} />
       <main className="app-main">
@@ -23,6 +23,7 @@ function App() {
           <Route path="/" element={<Navigate to="/customers" replace />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/trainings" element={<Trainings />} />
+          <Route path="/calendar" element={<Calendar />} />
         </Routes>
       </main>
     </div>
