@@ -48,6 +48,8 @@ export default function CalendarPage() {
         allDaySlot={false}
         slotMinTime="07:00:00"
         eventDisplay="block"
+        eventTimeFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
+        slotLabelFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
         events={async (_fetchInfo, successCallback) => {
           const list = await getTrainingsWithCustomer()
           successCallback(trainingsToEvents(list))
