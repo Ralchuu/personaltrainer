@@ -9,9 +9,6 @@ import type { CustomerForm } from '../types/customer'
 import { saveCustomer } from '../api/customerApi'
 
 
-// - open: whether the dialog is visible
-// - onClose: callback to close the dialog
-// - onSaved: optional callback called after the server returns the new customer
 type Props = {
 	open: boolean
 	onClose: () => void
@@ -19,8 +16,6 @@ type Props = {
 }
 
 export default function AddCustomer({ open, onClose, onSaved }: Props) {
-	// Local state for each form field. useState('') creates a string state and a setter.
-	// Each field stores what the user types so values can be sent to the server.
 	const [firstname, setFirstname] = useState('')
 	const [lastname, setLastname] = useState('')
 	const [streetaddress, setStreetaddress] = useState('')
@@ -29,7 +24,6 @@ export default function AddCustomer({ open, onClose, onSaved }: Props) {
 	const [email, setEmail] = useState('')
 	const [phone, setPhone] = useState('')
 
-	// reset(): clear all input fields back to empty strings
 	function reset() {
 		setFirstname('')
 		setLastname('')
@@ -40,38 +34,28 @@ export default function AddCustomer({ open, onClose, onSaved }: Props) {
 		setPhone('')
 	}
 
-	// handleClose(): run when user cancels or the dialog is closed
-	// Clears the form and call the onClose callback so the parent hides the dialog.
+	// handleClose(): close dialog and reset form.
 	function handleClose() {
 		reset()
 		onClose()
 	}
 
-	// handleSave(): build a simple object from form fields and POST it to the API.
+	// handleSave(): send form data to API and close dialog.
 	function handleSave() {
-		// required check
-		if (!firstname.trim() || !lastname.trim()) {
-			alert('Please enter first name and last name')
-			return
-		}
 		const payload: CustomerForm = {
-			firstname: firstname.trim(),
-			lastname: lastname.trim(),
-			streetaddress: streetaddress.trim() || undefined,
-			postcode: postcode.trim() || undefined,
-			city: city.trim() || undefined,
-			email: email.trim() || undefined,
-			phone: phone.trim() || undefined
+			firstname,
+			lastname,
+			streetaddress,
+			postcode,
+			city,
+			email,
+			phone
 		}
-		saveCustomer(payload)
-			.then((res) => {
-				// after successful save: clear form, inform parent and close dialog
-				reset()
-				onSaved?.(res)
-				onClose()
-			})
-			.catch(() => {
-			})
+		saveCustomer(payload).then(() => {
+			reset()
+			onSaved?.()
+			onClose()
+		})
 	}
 
 	return (
