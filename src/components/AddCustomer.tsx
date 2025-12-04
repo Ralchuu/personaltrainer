@@ -42,6 +42,10 @@ export default function AddCustomer({ open, onClose, onSaved }: Props) {
 
 	// handleSave(): send form data to API and close dialog.
 	function handleSave() {
+		if (!firstname.trim() || !lastname.trim()) {
+			alert('First name and last name are required')
+			return
+		}
 		const payload: CustomerForm = {
 			firstname,
 			lastname,

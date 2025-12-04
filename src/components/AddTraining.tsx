@@ -33,9 +33,13 @@ export default function AddTraining({ fetchTrainings, customerRow }: any) {
   }
 
   const save = () => {
-    const customer = customerRow._links.self.href || customerRow.id
+    if (!date.trim() || !activity.trim() || !duration.trim()) {
+      alert('Date, activity, and duration are required')
+      return
+    }
+    const customer = customerRow._links.self.href
     const isoDate = dayjs.tz(date, 'Europe/Helsinki').toISOString()
-    saveTraining({ date: isoDate, activity, duration: Number(duration), customer: String(customer) })
+    saveTraining({ date: isoDate, activity, duration: Number(duration), customer })
       .then((created) => {
         window.dispatchEvent(new CustomEvent('trainings:updated', { detail: created }))
         fetchTrainings()

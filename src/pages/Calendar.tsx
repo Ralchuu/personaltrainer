@@ -17,10 +17,10 @@ function trainingsToEvents(list: any[]) {
   return list.map(t => {
     const p = dayjs(t.date).tz('Europe/Helsinki')
     const s = new Date(p.year(), p.month(), p.date(), p.hour(), p.minute())
-    const e = new Date(s.getTime() + (Number(t.duration) || 60) * 60000)
-    const cust = typeof t.customer === 'object' ? `${t.customer.firstname || ''} ${t.customer.lastname || ''}`.trim() : String(t.customer || '')
+    const e = new Date(s.getTime() + Number(t.duration) * 60000)
+    const cust = typeof t.customer === 'object' ? `${t.customer.firstname} ${t.customer.lastname}`.trim() : t.customer
     return {
-      id: t._links?.self?.href || t.id || String(Math.random()),
+      id: t._links?.self?.href || t.id,
       title: `${t.activity}${cust ? ' / ' + cust : ''}`,
       start: s,
       end: e,

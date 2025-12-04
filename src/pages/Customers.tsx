@@ -23,9 +23,8 @@ export default function Customers() {
 
   useEffect(() => { fetchCustomers() }, [])
 
-  const rows = filter.trim()
-    ? customers.filter(c => [c.firstname, c.lastname, c.email, c.phone, c.streetaddress, c.postcode, c.city]
-        .filter(Boolean).join(' ').toLowerCase().includes(filter.toLowerCase()))
+  const rows = filter
+    ? customers.filter(c => `${c.firstname} ${c.lastname} ${c.email} ${c.phone} ${c.streetaddress} ${c.postcode} ${c.city}`.toLowerCase().includes(filter.toLowerCase()))
     : customers
 
   const columns: any[] = [

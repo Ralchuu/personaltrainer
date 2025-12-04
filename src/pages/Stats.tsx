@@ -18,7 +18,7 @@ export default function StatsPage() {
       const totals: Record<string, number> = {}
       list.forEach(t => {
         const activity = t.activity || 'Unknown'
-        const minutes = typeof t.duration === 'number' ? t.duration : parseFloat(String(t.duration || 0))
+        const minutes = typeof t.duration === 'number' ? t.duration : parseFloat(String(t.duration))
         totals[activity] = (totals[activity] || 0) + minutes
       })
 

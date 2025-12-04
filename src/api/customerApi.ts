@@ -11,7 +11,7 @@ export function getCustomers() {
 
 // deleteCustomer: Delete a customer by URL or ID.
 export function deleteCustomer(urlOrId: string | number) {
-  const url = typeof urlOrId === 'number' ? `${BASE}/customers/${urlOrId}` : String(urlOrId)
+  const url = typeof urlOrId === 'number' ? `${BASE}/customers/${urlOrId}` : urlOrId
   return fetch(url, { method: 'DELETE' })
 }
 

@@ -14,7 +14,7 @@ export function getTrainingsWithCustomer() {
 
 // deleteTraining: Delete a training by URL or ID.
 export function deleteTraining(urlOrId: string | number) {
-  const url = typeof urlOrId === 'number' ? `${BASE}/trainings/${urlOrId}` : String(urlOrId)
+  const url = typeof urlOrId === 'number' ? `${BASE}/trainings/${urlOrId}` : urlOrId
   return fetch(url, { method: 'DELETE' })
 }
 
