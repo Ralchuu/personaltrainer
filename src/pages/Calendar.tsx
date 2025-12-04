@@ -6,21 +6,19 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { getTrainingsWithCustomer } from '../api/trainingApi'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
+try { dayjs.tz.setDefault('Europe/Helsinki') } catch (e) {}
 
 function parseLocalDate(raw: any) {
   if (!raw) return null
-  const [datePart, timePart] = String(raw).split('T')
-  const [y, mo, d] = (datePart || '').split('-').map(Number)
-  // If backend returned only a date (no time), return local midnight
-  if (!timePart) return new Date(y, mo - 1, d)
-  // Otherwise extract hour and minute and ignore any timezone suffix
-  const [h, minPart] = (timePart || '').split(':')
-  const min = (minPart || '').split(/[Z+-]/)[0]
-  return new Date(y, mo - 1, d, Number(h || 0), Number(min || 0))
+  const d = (dayjs as any).tz(String(raw))
+  return d.isValid() ? d.toDate() : null
 }
-
-// trainingsToEvents(list)
 
 function trainingsToEvents(list: any) {
   const out: any[] = []
@@ -50,8 +48,8 @@ export default function CalendarPage() {
         calRef.current.getApi().refetchEvents()
       }
     }
-    window.addEventListener('trainings:updated', handler)
-    return () => window.removeEventListener('trainings:updated', handler)
+    ;(globalThis as any).addEventListener('trainings:updated', handler)
+    return () => (globalThis as any).removeEventListener('trainings:updated', handler)
   }, [])
 
   return (
