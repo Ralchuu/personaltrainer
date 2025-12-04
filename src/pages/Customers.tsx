@@ -10,34 +10,24 @@ import AddCustomer from '../components/AddCustomer'
 import EditCustomer from '../components/EditCustomer'
 import AddTraining from '../components/AddTraining'
 
-// Customers(): page component that renders customer list in a DataGrid and provides a simple search box.
+// Customers(): page component that renders customer list in a DataGrid with search and CRUD operations.
 export default function Customers() {
-
-  // - customers: array where the fetched customer list is stored
-  // - filter: text from the search box
-  // - addOpen: whether the add-customer dialog is visible
   const [customers, setCustomers] = useState<Customer[]>([])
   const [filter, setFilter] = useState('')
   const [addOpen, setAddOpen] = useState(false)
 
-  // fetchCustomers(): ask the API for the customer list and save it into state
+  // fetchCustomers(): load customers from API and update state.
   function fetchCustomers() {
-    getCustomers()
-      .then(data => setCustomers(Array.isArray(data) ? data : []))
-      .catch(err => console.error('Failed to fetch customers', err))
+    getCustomers().then(setCustomers)
   }
 
-  // When the page loads, fetch the customers once. The empty [] means "run once".
   useEffect(() => { fetchCustomers() }, [])
 
-    // rows: the data passed to the DataGrid. If the user typed something in the search box,
-    // the code filters customers by joining relevant fields and doing a simple includes() check.
   const rows = filter.trim()
     ? customers.filter(c => [c.firstname, c.lastname, c.email, c.phone, c.streetaddress, c.postcode, c.city]
         .filter(Boolean).join(' ').toLowerCase().includes(filter.toLowerCase()))
     : customers
 
-  // columns: describe which fields show up in the table and their labels
   const columns: any[] = [
     { field: 'firstname', headerName: 'First name', flex: 1, minWidth: 140 },
     { field: 'lastname', headerName: 'Last name', flex: 1, minWidth: 140 },
@@ -48,33 +38,26 @@ export default function Customers() {
     { field: 'phone', headerName: 'Phone', width: 130 }
   ]
 
-  // append actions column with the Edit and Delete controls
+  // append actions column with Edit and Delete controls
   columns.push({
     field: 'actions', headerName: 'Actions', width: 120, sortable: false, filterable: false,
-    renderCell: (params: any) => {
-      const row = params.row as any
-      return (
-        <div style={{ display: 'flex', gap: 6 }}>
-          <EditCustomer fetchCustomers={fetchCustomers} customerRow={row} />
-          <IconButton size="small" onClick={() => {
-            if (window.confirm('Delete this customer?')) {
-              const target = (row as any)?._links?.self?.href ?? (row as any).id
-              deleteCustomer(target).then(() => fetchCustomers())
-            }
-          }}>
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </div>
-      )
-    }
+    renderCell: (params: any) => (
+      <div style={{ display: 'flex', gap: 6 }}>
+        <EditCustomer fetchCustomers={fetchCustomers} customerRow={params.row} />
+        <IconButton size="small" onClick={() => {
+          if (window.confirm('Delete this customer?')) {
+            deleteCustomer(params.row._links.self.href).then(() => fetchCustomers())
+          }
+        }}>
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </div>
+    )
   })
 
   columns.push({
     field: 'addtraining', headerName: 'Add training', width: 120, sortable: false, filterable: false,
-    renderCell: (params: any) => {
-      const row = params.row as any
-      return <AddTraining fetchTrainings={() => {}} customerRow={row} />
-    }
+    renderCell: (params: any) => <AddTraining fetchTrainings={() => {}} customerRow={params.row} />
   })
 
   return (
@@ -82,18 +65,11 @@ export default function Customers() {
       <h2>Customers</h2>
 
       <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
-        {/* Search box: updates `filter` state on change */}
         <TextField size="small" placeholder="Search" value={filter} onChange={e => setFilter(e.target.value)} />
-        {/* Clear button: reset the search box */}
         <Button onClick={() => setFilter('')} variant="outlined" size="small">Clear</Button>
-        {/* Export CSV */}
         <Button onClick={() => {
           const header = 'First name,Last name,Address,Post code,City,Email,Phone'
-          const lines = rows.map(r => (
-            [r.firstname, r.lastname, r.streetaddress, r.postcode, r.city, r.email, r.phone]
-              .map(x => x ?? '')
-              .join(',')
-          ))
+          const lines = rows.map(r => [r.firstname, r.lastname, r.streetaddress, r.postcode, r.city, r.email, r.phone].join(','))
           const csv = [header, ...lines].join('\n')
           const blob = new Blob([csv], { type: 'text/csv' })
           const url = URL.createObjectURL(blob)
@@ -104,9 +80,7 @@ export default function Customers() {
           URL.revokeObjectURL(url)
         }} variant="outlined" size="small">Export CSV</Button>
         <div style={{ flex: 1 }} />
-        {/* Add customer button: open the dialog */}
         <Button variant="contained" size="small" onClick={() => setAddOpen(true)}>Add customer</Button>
-        {/* The add dialog: when saved, reload the list from server */}
         <AddCustomer open={addOpen} onClose={() => setAddOpen(false)} onSaved={() => fetchCustomers()} />
       </div>
 

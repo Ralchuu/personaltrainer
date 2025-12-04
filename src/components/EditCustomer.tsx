@@ -20,52 +20,35 @@ export default function EditCustomer({ fetchCustomers, customerRow }: EditCustom
   const [customer, setCustomer] = useState<CustomerForm>({
     firstname: '',
     lastname: '',
-    streetaddress: undefined,
-    postcode: undefined,
-    city: undefined,
-    email: undefined,
-    phone: undefined
+    streetaddress: '',
+    postcode: '',
+    city: '',
+    email: '',
+    phone: ''
   })
 
   const handleClickOpen = () => {
     setOpen(true)
     setCustomer({
-      firstname: customerRow.firstname ?? '',
-      lastname: customerRow.lastname ?? '',
-      streetaddress: customerRow.streetaddress ?? undefined,
-      postcode: customerRow.postcode ?? undefined,
-      city: customerRow.city ?? undefined,
-      email: customerRow.email ?? undefined,
-      phone: customerRow.phone ?? undefined
+      firstname: customerRow.firstname || '',
+      lastname: customerRow.lastname || '',
+      streetaddress: customerRow.streetaddress || '',
+      postcode: customerRow.postcode || '',
+      city: customerRow.city || '',
+      email: customerRow.email || '',
+      phone: customerRow.phone || ''
     })
   }
 
   const handleClose = () => {
     setOpen(false)
-    setCustomer({
-      firstname: '',
-      lastname: '',
-      streetaddress: undefined,
-      postcode: undefined,
-      city: undefined,
-      email: undefined,
-      phone: undefined
-    })
   }
 
   const handleSave = () => {
-    if (!customer.firstname || !customer.lastname) {
-      alert('Enter first name and last name!')
-      return
-    }
-
-    const url = (customerRow as any)?._links?.self?.href ?? (customerRow as any).id
-    updateCustomer(String(url), customer)
-      .then(() => {
-        fetchCustomers()
-        handleClose()
-      })
-      .catch(err => console.error(err))
+    updateCustomer((customerRow as any)._links.self.href, customer).then(() => {
+      fetchCustomers()
+      handleClose()
+    })
   }
 
   return (
@@ -97,40 +80,40 @@ export default function EditCustomer({ fetchCustomers, customerRow }: EditCustom
           <TextField
             margin="dense"
             label="Street address"
-            value={customer.streetaddress ?? ''}
-            onChange={e => setCustomer({ ...customer, streetaddress: e.target.value || undefined })}
+            value={customer.streetaddress}
+            onChange={e => setCustomer({ ...customer, streetaddress: e.target.value })}
             fullWidth
             variant="standard"
           />
           <TextField
             margin="dense"
             label="Post code"
-            value={customer.postcode ?? ''}
-            onChange={e => setCustomer({ ...customer, postcode: e.target.value || undefined })}
+            value={customer.postcode}
+            onChange={e => setCustomer({ ...customer, postcode: e.target.value })}
             fullWidth
             variant="standard"
           />
           <TextField
             margin="dense"
             label="City"
-            value={customer.city ?? ''}
-            onChange={e => setCustomer({ ...customer, city: e.target.value || undefined })}
+            value={customer.city}
+            onChange={e => setCustomer({ ...customer, city: e.target.value })}
             fullWidth
             variant="standard"
           />
           <TextField
             margin="dense"
             label="Email"
-            value={customer.email ?? ''}
-            onChange={e => setCustomer({ ...customer, email: e.target.value || undefined })}
+            value={customer.email}
+            onChange={e => setCustomer({ ...customer, email: e.target.value })}
             fullWidth
             variant="standard"
           />
           <TextField
             margin="dense"
             label="Phone"
-            value={customer.phone ?? ''}
-            onChange={e => setCustomer({ ...customer, phone: e.target.value || undefined })}
+            value={customer.phone}
+            onChange={e => setCustomer({ ...customer, phone: e.target.value })}
             fullWidth
             variant="standard"
           />
