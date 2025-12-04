@@ -47,6 +47,7 @@ export default function CalendarPage() {
         headerToolbar={{ left: 'today prev,next', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' }}
         allDaySlot={false}
         slotMinTime="07:00:00"
+        eventDisplay="block"
         events={async (_fetchInfo, successCallback) => {
           const list = await getTrainingsWithCustomer()
           successCallback(trainingsToEvents(list))
