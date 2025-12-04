@@ -28,6 +28,7 @@ function trainingsToEvents(list: any[]) {
   })
 }
 
+// CalendarPage: Render FullCalendar with trainings, listen for updates to refresh events.
 export default function CalendarPage() {
   const calRef = useRef<any>(null)
 
