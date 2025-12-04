@@ -44,7 +44,8 @@ export default function Trainings() {
     renderCell: (params: any) => (
       <IconButton size="small" onClick={() => {
         if (window.confirm('Delete this training?')) {
-          deleteTraining(params.row._links.self.href).then(() => { fetchTrainings(); window.dispatchEvent(new CustomEvent('trainings:updated')) })
+          const url = params.row._links?.self?.href || params.row.id
+          deleteTraining(url).then(() => { fetchTrainings(); window.dispatchEvent(new CustomEvent('trainings:updated')) })
         }
       }}>
         <DeleteIcon fontSize="small" />
