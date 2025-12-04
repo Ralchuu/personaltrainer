@@ -19,9 +19,9 @@ type Props = {
 }
 
 export default function AddCustomer({ open, onClose, onSaved }: Props) {
-		// Local state for each form field. useState('') creates a string state and a setter.
-		// Each field stores what the user types so values can be sent to the server.
-		const [firstname, setFirstname] = useState('')
+	// Local state for each form field. useState('') creates a string state and a setter.
+	// Each field stores what the user types so values can be sent to the server.
+	const [firstname, setFirstname] = useState('')
 	const [lastname, setLastname] = useState('')
 	const [streetaddress, setStreetaddress] = useState('')
 	const [postcode, setPostcode] = useState('')

@@ -12,51 +12,52 @@ import timezone from 'dayjs/plugin/timezone'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
-try { dayjs.tz.setDefault('Europe/Helsinki') } catch (e) {}
+dayjs.tz.setDefault('Europe/Helsinki')
 
-function parseLocalDate(raw: any) {
-  if (!raw) return null
-  const d = (dayjs as any).tz(String(raw))
-  return d.isValid() ? d.toDate() : null
+// parseLocalDate: Parse a date string in Helsinki timezone and return a Date object.
+function parseLocalDate(raw: string) {
+  const d = (dayjs as any).tz(raw)
+  return d.toDate()
 }
 
-function trainingsToEvents(list: any) {
-  const out: any[] = []
-  for (const t of list || []) {
+// trainingsToEvents: Convert training list to FullCalendar event objects with start/end times and customer names.
+function trainingsToEvents(list: any[]) {
+  return list.map(t => {
     const s = parseLocalDate(t.date)
-    if (!s) continue
     const dur = Number(t.duration || 60)
     const e = new Date(s.getTime())
     e.setMinutes(e.getMinutes() + dur)
-    const cust = t.customer && t.customer.firstname ? `${t.customer.firstname} ${t.customer.lastname || ''}`.trim() : (t.customer || '')
-    out.push({
-      id: (t && t._links && t._links.self && t._links.self.href) || (t && t.id) || '',
+    
+    const cust = typeof t.customer === 'object'
+      ? `${t.customer?.firstname ?? ''} ${t.customer?.lastname ?? ''}`.trim()
+      : String(t.customer ?? '')
+    
+    return {
+      id: t._links?.self?.href ?? t.id ?? String(Math.random()),
       title: `${t.activity}${cust ? ' / ' + cust : ''}`,
       start: s.toISOString(),
       end: e.toISOString(),
-    })
-  }
-  return out
+    }
+  })
 }
 
+// CalendarPage: Render FullCalendar with trainings, listen for updates to refresh events.
 export default function CalendarPage() {
   const calRef = useRef<any>(null)
 
   useEffect(() => {
     const handler = () => {
-      if (calRef.current && calRef.current.getApi) {
-        calRef.current.getApi().refetchEvents()
-      }
+      calRef.current.getApi().refetchEvents()
     }
-    ;(globalThis as any).addEventListener('trainings:updated', handler)
-    return () => (globalThis as any).removeEventListener('trainings:updated', handler)
+    globalThis.addEventListener('trainings:updated', handler)
+    return () => globalThis.removeEventListener('trainings:updated', handler)
   }, [])
 
   return (
     <Box component="section" sx={{ maxWidth: 'none', width: '100%', px: 2 }}>
-      {/* Page heading */}
+   
       <Typography variant="h5" gutterBottom>Calendar</Typography>
-      {/* FullCalendar instance: configured to show a time-grid week view */}
+     
       <FullCalendar
         ref={calRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -64,15 +65,9 @@ export default function CalendarPage() {
         headerToolbar={{ left: 'today prev,next', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' }}
         allDaySlot={false}
         slotMinTime="07:00:00"
-        events={async (_fetchInfo, successCallback, failureCallback) => {
-          try {
-            const list = await getTrainingsWithCustomer()
-            const ev = Array.isArray(list) ? trainingsToEvents(list) : []
-            successCallback(ev)
-          } catch (err) {
-            const e = err instanceof Error ? err : new Error(String(err) || 'Failed to load trainings')
-            failureCallback(e)
-          }
+        events={async (_fetchInfo, successCallback) => {
+          const list = await getTrainingsWithCustomer()
+          successCallback(trainingsToEvents(list))
         }}
         height="auto"
         nowIndicator

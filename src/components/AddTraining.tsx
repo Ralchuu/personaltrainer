@@ -23,7 +23,7 @@ export default function AddTraining({ fetchTrainings, customerRow }: any) {
     // use local time so the datetime-local shows the user's local clock
     const local = (d: Date) => {
       const pad = (n: number) => String(n).padStart(2, '0')
-      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
     }
     setTempDate(local(new Date()))
     setDate('')
@@ -39,11 +39,11 @@ export default function AddTraining({ fetchTrainings, customerRow }: any) {
     saveTraining({ date, activity, duration: Number(duration), customer: String(customer) })
       .then((created) => {
         // notify other parts of the app and include the created training as detail
-        try { window.dispatchEvent(new CustomEvent('trainings:updated', { detail: created })) } catch {}
+        try { window.dispatchEvent(new CustomEvent('trainings:updated', { detail: created })) } catch { }
         fetchTrainings();
         setOpen(false);
       })
-      .catch(() => {})
+      .catch(() => { })
   }
 
   return (

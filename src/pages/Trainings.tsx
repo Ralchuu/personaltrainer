@@ -19,25 +19,27 @@ export default function Trainings() {
   function fetchTrainings() {
     getTrainingsWithCustomer()
       .then(list => setTrainings(Array.isArray(list) ? list : []))
-      .catch(() => {})
+      .catch(() => { })
   }
 
   const rows = filter.trim()
     ? trainings.filter(t => {
-        const customerName = typeof t.customer === 'object' ? `${t.customer?.firstname ?? ''} ${t.customer?.lastname ?? ''}`.trim() : String(t.customer ?? '')
-        return [t.activity, customerName].filter(Boolean).join(' ').toLowerCase().includes(filter.toLowerCase())
-      })
+      const customerName = typeof t.customer === 'object' ? `${t.customer?.firstname ?? ''} ${t.customer?.lastname ?? ''}`.trim() : String(t.customer ?? '')
+      return [t.activity, customerName].filter(Boolean).join(' ').toLowerCase().includes(filter.toLowerCase())
+    })
     : trainings
 
   const columns: GridColDef[] = [
     { field: 'date', headerName: 'Date', width: 180, renderCell: (params: any) => dayjs(params.value ?? params.row.date).format('DD.MM.YYYY HH:mm') },
     { field: 'activity', headerName: 'Activity', flex: 1, minWidth: 160 },
     { field: 'duration', headerName: 'Duration (min)', width: 140 },
-    { field: 'customer', headerName: 'Customer', flex: 1, minWidth: 160, renderCell: (params: any) => {
+    {
+      field: 'customer', headerName: 'Customer', flex: 1, minWidth: 160, renderCell: (params: any) => {
         const c = params.row.customer
         if (!c) return ''
         return typeof c === 'string' ? c : `${c.firstname ?? ''} ${c.lastname ?? ''}`.trim()
-      } }
+      }
+    }
   ]
 
   // add actions column with delete button
@@ -49,7 +51,7 @@ export default function Trainings() {
         <IconButton size="small" onClick={() => {
           if (window.confirm('Delete this training?')) {
             const target = row?._links?.self?.href ?? row?.id
-            deleteTraining(target).then(() => { fetchTrainings(); window.dispatchEvent(new CustomEvent('trainings:updated')) }).catch(() => {})
+            deleteTraining(target).then(() => { fetchTrainings(); window.dispatchEvent(new CustomEvent('trainings:updated')) }).catch(() => { })
           }
         }}>
           <DeleteIcon fontSize="small" />
