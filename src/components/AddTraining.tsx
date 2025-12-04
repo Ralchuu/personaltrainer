@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import AddIcon from '@mui/icons-material/Add'
@@ -9,6 +12,10 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import { saveTraining } from '../api/trainingApi'
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('Europe/Helsinki')
+
 // AddTraining: Dialog to add a training for a customer.
 export default function AddTraining({ fetchTrainings, customerRow }: any) {
   const [open, setOpen] = useState(false)
@@ -18,11 +25,7 @@ export default function AddTraining({ fetchTrainings, customerRow }: any) {
   const [duration, setDuration] = useState('')
 
   const openDialog = () => {
-    const local = (d: Date) => {
-      const pad = (n: number) => String(n).padStart(2, '0')
-      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-    }
-    setTempDate(local(new Date()))
+    setTempDate(dayjs().tz('Europe/Helsinki').format('YYYY-MM-DDTHH:mm'))
     setDate('')
     setActivity('')
     setDuration('')
@@ -31,7 +34,8 @@ export default function AddTraining({ fetchTrainings, customerRow }: any) {
 
   const save = () => {
     const customer = customerRow._links.self.href || customerRow.id
-    saveTraining({ date, activity, duration: Number(duration), customer: String(customer) })
+    const isoDate = dayjs.tz(date, 'Europe/Helsinki').toISOString()
+    saveTraining({ date: isoDate, activity, duration: Number(duration), customer: String(customer) })
       .then((created) => {
         window.dispatchEvent(new CustomEvent('trainings:updated', { detail: created }))
         fetchTrainings()
