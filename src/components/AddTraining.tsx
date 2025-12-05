@@ -40,8 +40,7 @@ export default function AddTraining({ fetchTrainings, customerRow }: any) {
     const customer = customerRow._links.self.href
     const isoDate = dayjs.tz(date, 'Europe/Helsinki').toISOString()
     saveTraining({ date: isoDate, activity, duration: Number(duration), customer })
-      .then((created) => {
-        window.dispatchEvent(new CustomEvent('trainings:updated', { detail: created }))
+      .then(() => {
         fetchTrainings()
         setOpen(false)
       })
